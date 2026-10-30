@@ -1,0 +1,7 @@
+langchain>=0.3.0                 # Core framework para orquestração de componentes RAG
+langchain-community>=0.3.0       # Integrações comunitárias loaders de PDF e FAISS
+langchain-text-splitters>=0.3.0  # Divisão dos documentos em chunks
+google-genai>=1.0.0              # SDK moderno oficial do Google GenAI para embeddings e LLMs
+faiss-cpu                        # Banco vetorial local para indexação e busca por similaridade
+pypdf                            # Biblioteca para extração de texto de arquivos PDF
+python-dotenv                    # Gerenciador de variáveis de ambiente (.env)
