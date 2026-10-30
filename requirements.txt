@@ -5,3 +5,4 @@ google-genai>=1.0.0              # SDK moderno oficial do Google GenAI para embe
 faiss-cpu                        # Banco vetorial local para indexação e busca por similaridade
 pypdf                            # Biblioteca para extração de texto de arquivos PDF
 python-dotenv                    # Gerenciador de variáveis de ambiente (.env)
+streamlit>=1.38.0                # Framework web para interface interativa do RAG

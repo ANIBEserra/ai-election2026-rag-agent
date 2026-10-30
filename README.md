@@ -52,11 +52,14 @@ ai-election2026-rag-agent/
 │   └── 01_eda_pdf_structure_inspection.ipynb  # Notebook V1 de inspeção, ETL e prototipagem
 │
 ├── src/
+│   ├── __init__.py
 │   ├── ingestion/
+│   │   ├── __init__.py
 │   │   ├── candidates.py       # Dicionário de metadados dos candidatos (nome, partido, vice)
 │   │   └── ingest.py           # Pipeline de ETL: Leitura de PDF -> Chunking -> Embeddings -> FAISS
 │   │
 │   └── rag/
+│       ├── __init__.py
 │       └── engine.py           # Motor RAG: Busca no FAISS + Geração analítica com Gemini
 │
 ├── .env                        # Variáveis de ambiente (GOOGLE_API_KEY)
