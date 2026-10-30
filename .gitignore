@@ -25,5 +25,4 @@ ENV/
 .idea/
 
 # Dados locais de teste
-data/
-*.pdf
+docs/
