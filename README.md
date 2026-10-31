@@ -1,3 +1,9 @@
+<div align="center">
+  <a href="https://ai-election2026-rag-agent.streamlit.app/" target="_blank">
+    <img src="https://img.shields.io/badge/_Acessar_App-Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Streamlit App" />
+  </a>
+</div>
+
 ## Definição do Problema
 
 Planos de governo publicados durante períodos eleitorais são documentos em formato PDF não estruturado, frequentemente longos e com terminologias heterogêneas. Para cidadãos consultar, comparar e extrair propostas específicas sobre eixos como saúde, educação, economia ou infraestrutura consome tempo e dificulta a checagem objetiva.
@@ -53,6 +59,11 @@ ai-election2026-rag-agent/
 │
 ├── src/
 │   ├── __init__.py
+│   ├── frontend/
+│   │   ├── __init__.py
+│   │   ├── styles.css           # Estilização CSS das colunas, cards e badges
+│   │   └── components.py        # Funções Python que renderizam o HTML comparativo
+│   │ 
 │   ├── ingestion/
 │   │   ├── __init__.py
 │   │   ├── candidates.py       # Dicionário de metadados dos candidatos (nome, partido, vice)

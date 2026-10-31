@@ -1,0 +1,159 @@
+#MainMenu { visibility: hidden; }
+footer { visibility: hidden; }
+
+/* Global App Light Mode */
+.stApp {
+    background-color: #F8FAFC !important;
+    color: #1E293B !important;
+}
+
+/* Hero Section */
+.hero-container {
+    text-align: center;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.hero-sphere {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #3B82F6, #1D4ED8);
+    border-radius: 50%;
+    margin: 0 auto 16px auto;
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+}
+
+.hero-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #0F172A;
+    margin-bottom: 8px;
+}
+
+.hero-subtitle {
+    font-size: 1rem;
+    color: #64748B;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Grid de Botões de Temas */
+div[data-testid="column"] .stButton > button {
+    background-color: #FFFFFF !important;
+    color: #1E293B !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 12px !important;
+    padding: 16px !important;
+    height: 90px !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    text-align: left !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02) !important;
+    transition: all 0.2s ease-in-out !important;
+    font-weight: 600 !important;
+}
+
+div[data-testid="column"] .stButton > button:hover {
+    border-color: #3B82F6 !important;
+    background-color: #FFFFFF !important;
+    box-shadow: 0 6px 15px rgba(59, 130, 246, 0.1) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* --- Infográfico VS Comparativo --- */
+.vs-theme-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #0F172A;
+    border-left: 5px solid #2563EB;
+    padding-left: 12px;
+    margin-bottom: 20px;
+    margin-top: 10px;
+}
+
+.vs-header-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin-bottom: 25px;
+}
+
+.vs-header-left {
+    flex: 1;
+    background: linear-gradient(135deg, #1D4ED8, #2563EB);
+    color: #FFFFFF;
+    padding: 14px 20px;
+    border-radius: 12px 0 0 12px;
+    text-align: center;
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.vs-header-right {
+    flex: 1;
+    background: linear-gradient(135deg, #059669, #10B981);
+    color: #FFFFFF;
+    padding: 14px 20px;
+    border-radius: 0 12px 12px 0;
+    text-align: center;
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.vs-circle {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 46px;
+    height: 46px;
+    background-color: #FFFFFF;
+    border: 3px solid #2563EB;
+    border-radius: 50%;
+    color: #1E293B;
+    font-weight: 900;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Cards de Conteúdo Simétricos com Fundo Branco */
+.vs-card-box {
+    background-color: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 12px !important;
+    padding: 18px !important;
+    min-height: 100px !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
+}
+
+.vs-body-text {
+    font-size: 0.9rem;
+    color: #1E293B !important;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Badges Centrais Destacadas */
+.vs-center-badge {
+    background-color: #F1F5F9 !important;
+    color: #334155 !important;
+    border: 1px solid #CBD5E1 !important;
+    padding: 10px 8px !important;
+    border-radius: 8px !important;
+    text-align: center !important;
+    font-weight: 700 !important;
+    font-size: 0.82rem !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+    margin-top: 10px;
+}
+
+.vs-text-bold { font-weight: 700; }
+.vs-text-green { color: #059669 !important; font-weight: 700; }
+.vs-text-amber { color: #D97706 !important; }

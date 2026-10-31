@@ -1,4 +1,6 @@
+import json
 import os
+import re
 from pathlib import Path
 import streamlit as st
 from google import genai
@@ -22,7 +24,7 @@ class RAGEngine:
         )
 
 
-    def analisar_propostas(self, pergunta: str) -> str:
+    def analisar_propostas_estruturado(self, pergunta: str) -> dict:
         #2. Transformar o prompt em vetor
         query_response = self.CLIENT.models.embed_content(
             model=self.EMBEDDING_MODEL,
@@ -41,10 +43,7 @@ class RAGEngine:
             candidato = doc.metadata.get("nome_candidato", "N/A")
             partido = doc.metadata.get("sigla_partido", "N/A")
             pagina = doc.metadata.get("page", "N/A")
-
-            contexto_formatado += f"\n--- [TRECHO {i+1}] ---\n"
-            contexto_formatado += f"CANDIDATO: {candidato} ({partido}) | PÁGINA: {pagina}\n"
-            contexto_formatado += f"CONTEÚDO:\n{doc.page_content}\n"
+            contexto_formatado += f"\n--- [TRECHO {i+1}] CANDIDATO: {candidato} ({partido}) | PÁGINA: {pagina} ---\n{doc.page_content}\n"
 
         print("\n4. Contexto estruturado com retorno de metadados estruturado")
 
@@ -53,31 +52,36 @@ class RAGEngine:
 
         Sua tarefa é realizar uma ANÁLISE CRÍTICA E QUANTITATIVA sobre as propostas dos candidatos com base EXCLUSIVAMENTE no contexto fornecido.
 
-        ESTRUTURA OBRIGATÓRIA DA RESPOSTA:
-
-        Para CADA candidato identificado no contexto:
-        1. **Resumo das Propostas & Números Chave:**
+        INSTRUÇÕES RIGOROSAS PARA CADA CANDIDATO:
+        1. Resumo das Propostas & Números Chave:
         - Liste as propostas identificando os mecanismos de execução ("Como fará").
-        - Destaque OBRIGATORIAMENTE todos os dados quantitativos explicitados no texto (valores orçamentários, percentuais, prazos, metas ou métricas). Se o documento não trouxer números, declare: "O plano não apresenta dados quantitativos ou metas numéricas explícitas para este tema."
-        - Cite a página de origem [Pág. X].
+        - Destaque OBRIGATORIAMENTE todos os dados quantitativos explicitados no texto (valores orçamentários, percentuais, prazos, metas ou métricas).
+        - Se o documento não trouxer números, declare EXPLICITAMENTE: "O plano não apresenta dados quantitativos ou metas numéricas explícitas para este tema."
+        - Cite OBRIGATORIAMENTE a página de origem no formato [Pág. X].
 
-        2. **Análise Crítica de Impactos (Cenário Brasil 2026):**
-        - **Impactos Positivos (Oportunidades):** Quais avanços sociais, econômicos ou administrativos a medida pode gerar?
-        - **Riscos e Pontos de Atenção (Desafios):** Avalie a viabilidade fiscal, orçamentária e operacional considerando o atual cenário do país (ex: espaço no orçamento, necessidade de aprovação legislativa, complexidade de implementação).
+        2. Análise Crítica de Impactos (Cenário Brasil 2026):
+        - Impactos Positivos (Oportunidades): Quais avanços sociais, econômicos ou administrativos a medida pode gerar?
+        - Riscos e Pontos de Atenção (Desafios): Avalie a viabilidade fiscal, orçamentária e operacional considerando o atual cenário do país (espaço no orçamento, necessidade de aprovação legislativa, complexidade de implementação).
 
-        3. **Quadro Comparativo Final (Markdown):**
-        Crie uma tabela final consolidando:
-        | Candidato (Partido) | Proposta Principal | Dados Quantitativos/Metas | Prós | Contras / Riscos Fiscais e Operacionais |
-        
         REGRAS RÍGIDAS:
         - Mantenha tom neutro, técnico e estritamente focado em políticas públicas.
-        - Não tome partido; aplique o mesmo rigor crítico a todos os planos analisados."""
+        - Não tome partido; aplique o mesmo rigor crítico a todos os planos analisados.
 
-        prompt_final = f"""CONTEXTO DOS PLANOS DE GOVERNO:
-        {contexto_formatado}
+        A resposta DEVE ser um objeto JSON no formato:
+        {
+        "candidatos": [
+            {
+            "nome_candidato": "Nome do Candidato",
+            "sigla_partido": "Sigla do Partido",
+            "proposta_principal": "Descrição da proposta e como fará executá-la com citação [Pág. X]",
+            "dados_quantitativos": "Dados numéricos, %, valores e prazos [Pág. X] OU a declaração 'O plano não apresenta dados quantitativos ou metas numéricas explícitas para este tema.'",
+            "impactos_positivos": "Avanços sociais, econômicos ou administrativos esperados",
+            "riscos_desafios": "Análise de viabilidade fiscal, orçamentária e complexidade operacional"
+            }
+        ]
+        }"""
 
-        PERGUNTA DE ANÁLISE:
-        {pergunta}"""
+        prompt_final = f"CONTEXTO:\n{contexto_formatado}\n\nPERGUNTA:\n{pergunta}"
 
         print("\n5. Prompt especializado em análise comparativa com system_instruction e o prompt_final montado")
 
@@ -88,7 +92,9 @@ class RAGEngine:
             contents=prompt_final,
             config=types.GenerateContentConfig(
                 system_instruction=system_instruction,
-                temperature=0.1 #Rigor analítico com baixa alucinação
+                temperature=0.1, #Rigor analítico com baixa alucinação
+                response_mime_type="application/json" # Assegura o parsing limpo no Python
             )
         )
-        return resposta.text
+        texto_resposta = resposta.text.replace("```json", "").replace("```", "").strip()
+        return json.loads(texto_resposta)
