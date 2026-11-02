@@ -138,3 +138,17 @@ div[aria-selected="true"] {
     border-color: #2563EB !important;
     color: #1D4ED8 !important;
 }
+
+/* Força a barra de abas (Tabs) a ter rolagem horizontal no celular */
+div[data-baseweb="tab-list"] {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    padding-bottom: 6px !important;
+}
+
+div[data-baseweb="tab"] {
+    flex-shrink: 0 !important;
+    white-space: nowrap !important;
+}
