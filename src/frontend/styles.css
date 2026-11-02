@@ -10,8 +10,7 @@ footer { visibility: hidden; }
 /* Hero Section */
 .hero-container {
     text-align: center;
-    margin-top: 2rem;
-    margin-bottom: 2rem;
+    margin: 2rem 0;
 }
 
 .hero-sphere {
@@ -81,26 +80,20 @@ div[data-testid="column"] .stButton > button:hover {
     margin-bottom: 25px;
 }
 
-.vs-header-left {
+.vs-header-left, .vs-header-right {
     flex: 1;
-    background: linear-gradient(135deg, #1D4ED8, #2563EB);
-    color: #FFFFFF;
     padding: 14px 20px;
-    border-radius: 12px 0 0 12px;
     text-align: center;
     font-size: 1.15rem;
     font-weight: 700;
 }
 
+.vs-header-left {
+    border-radius: 12px 0 0 12px;
+}
+
 .vs-header-right {
-    flex: 1;
-    background: linear-gradient(135deg, #059669, #10B981);
-    color: #FFFFFF;
-    padding: 14px 20px;
     border-radius: 0 12px 12px 0;
-    text-align: center;
-    font-size: 1.15rem;
-    font-weight: 700;
 }
 
 .vs-circle {
@@ -123,37 +116,25 @@ div[data-testid="column"] .stButton > button:hover {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
-/* Cards de Conteúdo Simétricos com Fundo Branco */
-.vs-card-box {
+/* Estilização Customizada das Abas (Carrossel Horizontal no Streamlit) */
+div[data-baseweb="tab-list"] {
+    gap: 8px;
+    padding-bottom: 8px;
+    overflow-x: auto;
+}
+
+div[data-baseweb="tab"] {
     background-color: #FFFFFF !important;
     border: 1px solid #E2E8F0 !important;
-    border-radius: 12px !important;
-    padding: 18px !important;
-    min-height: 100px !important;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04) !important;
-}
-
-.vs-body-text {
-    font-size: 0.9rem;
-    color: #1E293B !important;
-    line-height: 1.5;
-    margin: 0;
-}
-
-/* Badges Centrais Destacadas */
-.vs-center-badge {
-    background-color: #F1F5F9 !important;
-    color: #334155 !important;
-    border: 1px solid #CBD5E1 !important;
-    padding: 10px 8px !important;
     border-radius: 8px !important;
-    text-align: center !important;
+    padding: 10px 16px !important;
     font-weight: 700 !important;
-    font-size: 0.82rem !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-    margin-top: 10px;
+    color: #475569 !important;
+    white-space: nowrap;
 }
 
-.vs-text-bold { font-weight: 700; }
-.vs-text-green { color: #059669 !important; font-weight: 700; }
-.vs-text-amber { color: #D97706 !important; }
+div[aria-selected="true"] {
+    background-color: #EFF6FF !important;
+    border-color: #2563EB !important;
+    color: #1D4ED8 !important;
+}
