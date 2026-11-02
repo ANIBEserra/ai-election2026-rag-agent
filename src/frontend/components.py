@@ -50,9 +50,10 @@ def render_prompt_grid():
 
 def render_comparison_cards(dados_json: dict, tema_pergunta: str = "Análise Comparativa"):
     """
-    Renderiza o infográfico comparativo em formato de Abas / Carrossel Horizontal:
-    - Lula (PT): Vermelho Bordô (#991B1B)
-    - Bolsonaro (PL): Azul Escuro (#1E3A8A)
+    Renderiza os cartões em blocos verticais auto-contidos no Mobile
+    e lado a lado no Desktop, garantindo identificação por cores:
+    - Lula (PT): Fundo avermelhado (#FEF2F2), Borda Vermelho Bordô (#991B1B)
+    - Bolsonaro (PL): Fundo azulado (#EFF6FF), Borda Azul Escuro (#1E3A8A)
     """
     load_css()
     candidatos = dados_json.get("candidatos", [])
@@ -66,47 +67,30 @@ def render_comparison_cards(dados_json: dict, tema_pergunta: str = "Análise Com
 
     nome_a = cand_a.get('nome_candidato', 'Candidato A')
     sigla_a = cand_a.get('sigla_partido', '')
-    
     nome_b = cand_b.get('nome_candidato', 'Candidato B')
     sigla_b = cand_b.get('sigla_partido', '')
 
     def get_cand_theme(nome, sigla):
-        nome_upper = f"{nome} {sigla}".upper()
-        if "LULA" in nome_upper or "PT" in nome_upper:
+        full = f"{nome} {sigla}".upper()
+        if "LULA" in full or "PT" in full:
             return {
-                "header_bg": "background: linear-gradient(135deg, #7F1D1D, #991B1B) !important; color: #FFFFFF !important;",
-                "card_style": "background-color: #FEF2F2 !important; border-left: 6px solid #991B1B !important; border-top: 1px solid #FCA5A5 !important; border-right: 1px solid #FCA5A5 !important; border-bottom: 1px solid #FCA5A5 !important; border-radius: 12px; padding: 18px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);",
-                "tag_style": "color: #7F1D1D !important; font-weight: 800; font-size: 0.9rem; margin-bottom: 8px; border-bottom: 1px solid #FECACA; padding-bottom: 4px; display: flex; align-items: center; gap: 6px;",
-                "text_style": "color: #7F1D1D !important; font-size: 0.9rem; line-height: 1.5; margin: 0;",
+                "header_bg": "background: linear-gradient(135deg, #7F1D1D, #991B1B); color: #FFFFFF;",
+                "box_style": "background-color: #FEF2F2 !important; border-left: 6px solid #991B1B !important; border-top: 1px solid #FCA5A5 !important; border-right: 1px solid #FCA5A5 !important; border-bottom: 1px solid #FCA5A5 !important;",
+                "tag_style": "color: #7F1D1D !important; border-bottom: 1px solid #FECACA;",
+                "text_color": "color: #7F1D1D !important;",
                 "icon": "🔴"
             }
         return {
-            "header_bg": "background: linear-gradient(135deg, #1E3A8A, #1E40AF) !important; color: #FFFFFF !important;",
-            "card_style": "background-color: #EFF6FF !important; border-left: 6px solid #1E3A8A !important; border-top: 1px solid #93C5FD !important; border-right: 1px solid #93C5FD !important; border-bottom: 1px solid #93C5FD !important; border-radius: 12px; padding: 18px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);",
-            "tag_style": "color: #1E3A8A !important; font-weight: 800; font-size: 0.9rem; margin-bottom: 8px; border-bottom: 1px solid #BFDBFE; padding-bottom: 4px; display: flex; align-items: center; gap: 6px;",
-            "text_style": "color: #1E3A8A !important; font-size: 0.9rem; line-height: 1.5; margin: 0;",
+            "header_bg": "background: linear-gradient(135deg, #1E3A8A, #1E40AF); color: #FFFFFF;",
+            "box_style": "background-color: #EFF6FF !important; border-left: 6px solid #1E3A8A !important; border-top: 1px solid #93C5FD !important; border-right: 1px solid #93C5FD !important; border-bottom: 1px solid #93C5FD !important;",
+            "tag_style": "color: #1E3A8A !important; border-bottom: 1px solid #BFDBFE;",
+            "text_color": "color: #1E3A8A !important;",
             "icon": "🔵"
         }
 
-    theme_a = get_cand_theme(nome_a, sigla_a)
-    theme_b = get_cand_theme(nome_b, sigla_b)
+    t_a = get_cand_theme(nome_a, sigla_a)
+    t_b = get_cand_theme(nome_b, sigla_b)
 
-    # 1. Título do Tema
-    st.markdown(f'<div class="vs-theme-title">| {tema_pergunta}</div>', unsafe_allow_html=True)
-
-    # 2. Cabeçalho Convergente
-    st.markdown(
-        f"""
-        <div class="vs-header-container">
-            <div class="vs-header-left" style="{theme_a['header_bg']}">{theme_a['icon']} {nome_a} ({sigla_a})</div>
-            <div class="vs-circle">VS</div>
-            <div class="vs-header-right" style="{theme_b['header_bg']}">{theme_b['icon']} {nome_b} ({sigla_b})</div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    # 3. Níveis da Análise mapeados em Abas (Carrossel)
     niveis = [
         ("📌 Proposta Principal", "proposta_principal"),
         ("📊 Dados Quantitativos", "dados_quantitativos"),
@@ -114,40 +98,56 @@ def render_comparison_cards(dados_json: dict, tema_pergunta: str = "Análise Com
         ("⚠️ Riscos e Desafios", "riscos_desafios")
     ]
 
-    # Criação do carrossel horizontal através de st.tabs
-    aba_titulos = [n[0] for n in niveis]
-    abas = st.tabs(aba_titulos)
+    # Início da montagem da página em HTML puro (sem quebra de colunas pelo Streamlit)
+    html_out = f"""
+    <div class="vs-theme-title">| {tema_pergunta}</div>
+    
+    <div style="display: flex; align-items: center; position: relative; margin-bottom: 25px;">
+        <div style="flex: 1; {t_a['header_bg']} padding: 12px; border-radius: 10px 0 0 10px; text-align: center; font-weight: 700; font-size: 1rem;">
+            {t_a['icon']} {nome_a} ({sigla_a})
+        </div>
+        <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: #FFF; border: 3px solid #1E3A8A; border-radius: 50%; color: #0F172A; font-weight: 900; display: flex; align-items: center; justify-content: center; z-index: 10; box-shadow: 0 4px 8px rgba(0,0,0,0.15);">
+            VS
+        </div>
+        <div style="flex: 1; {t_b['header_bg']} padding: 12px; border-radius: 0 10px 10px 0; text-align: center; font-weight: 700; font-size: 1rem;">
+            {t_b['icon']} {nome_b} ({sigla_b})
+        </div>
+    </div>
+    """
 
-    for aba, (badge_titulo, key_json) in zip(abas, niveis):
+    # Para cada nível de análise (Subtema)
+    for badge_titulo, key_json in niveis:
         val_a = cand_a.get(key_json, "Informação não especificada no plano de governo.")
         val_b = cand_b.get(key_json, "Informação não especificada no plano de governo.")
 
-        with aba:
-            st.markdown("<div style='margin-top: 12px;'></div>", unsafe_allow_html=True)
-            col_left, col_right = st.columns(2)
+        html_out += f"""
+        <div style="margin-bottom: 20px;">
+            <!-- Badge do Subtema centralizado/destacado -->
+            <div style="background-color: #F1F5F9; color: #334155; border: 1px solid #CBD5E1; padding: 8px 12px; border-radius: 8px; text-align: center; font-weight: 700; font-size: 0.9rem; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
+                {badge_titulo}
+            </div>
 
-            with col_left:
-                st.markdown(
-                    f"""
-                    <div style="{theme_a['card_style']}">
-                        <div style="{theme_a['tag_style']}">
-                            {theme_a['icon']} {nome_a} ({sigla_a})
-                        </div>
-                        <p style="{theme_a['text_style']}">{val_a}</p>
+            <!-- Grid flexível que se adapta no Mobile e Desktop -->
+            <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+                
+                <!-- CARD CANDIDATO A -->
+                <div style="flex: 1; min-width: 280px; {t_a['box_style']} border-radius: 12px; padding: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.03);">
+                    <div style="{t_a['tag_style']} font-weight: 800; font-size: 0.85rem; margin-bottom: 6px; padding-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                        {t_a['icon']} {nome_a} ({sigla_a})
                     </div>
-                    """,
-                    unsafe_allow_html=True
-                )
+                    <p style="{t_a['text_color']} font-size: 0.88rem; line-height: 1.5; margin: 0;">{val_a}</p>
+                </div>
 
-            with col_right:
-                st.markdown(
-                    f"""
-                    <div style="{theme_b['card_style']}">
-                        <div style="{theme_b['tag_style']}">
-                            {theme_b['icon']} {nome_b} ({sigla_b})
-                        </div>
-                        <p style="{theme_b['text_style']}">{val_b}</p>
+                <!-- CARD CANDIDATO B -->
+                <div style="flex: 1; min-width: 280px; {t_b['box_style']} border-radius: 12px; padding: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.03);">
+                    <div style="{t_b['tag_style']} font-weight: 800; font-size: 0.85rem; margin-bottom: 6px; padding-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                        {t_b['icon']} {nome_b} ({sigla_b})
                     </div>
-                    """,
-                    unsafe_allow_html=True
-                )
+                    <p style="{t_b['text_color']} font-size: 0.88rem; line-height: 1.5; margin: 0;">{val_b}</p>
+                </div>
+
+            </div>
+        </div>
+        """
+
+    st.markdown(html_out, unsafe_allow_html=True)
