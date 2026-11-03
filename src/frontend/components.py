@@ -50,8 +50,10 @@ def render_prompt_grid():
 
 def render_comparison_cards(dados_json: dict, tema_pergunta: str = "Análise Comparativa"):
     """
-    Renderiza os cartões verticais pareados para Mobile/Desktop
-    sem risco de vazamento de código HTML.
+    Renderiza os cartões comparativos usando Tabs (Abas) Nativas do Streamlit.
+    Garante visual limpo e responsivo sem risco de vazamento de HTML.
+    - Lula (PT): Vermelho Bordô (#991B1B)
+    - Bolsonaro (PL): Azul Escuro (#1E3A8A)
     """
     load_css()
     candidatos = dados_json.get("candidatos", [])
@@ -73,22 +75,42 @@ def render_comparison_cards(dados_json: dict, tema_pergunta: str = "Análise Com
         if "LULA" in full or "PT" in full:
             return {
                 "header_bg": "background: linear-gradient(135deg, #7F1D1D, #991B1B); color: #FFFFFF;",
-                "box_style": "background-color: #FEF2F2 !important; border-left: 6px solid #991B1B !important; border-top: 1px solid #FCA5A5 !important; border-right: 1px solid #FCA5A5 !important; border-bottom: 1px solid #FCA5A5 !important;",
-                "tag_style": "color: #7F1D1D !important; border-bottom: 1px solid #FECACA;",
-                "text_color": "color: #7F1D1D !important;",
+                "box_style": "background-color: #FEF2F2; border-left: 6px solid #991B1B; border-top: 1px solid #FCA5A5; border-right: 1px solid #FCA5A5; border-bottom: 1px solid #FCA5A5; border-radius: 12px; padding: 16px;",
+                "tag_style": "color: #7F1D1D; font-weight: 800; font-size: 0.85rem; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid #FECACA; display: flex; align-items: center; gap: 6px;",
+                "text_color": "color: #7F1D1D; font-size: 0.88rem; line-height: 1.5; margin: 0;",
                 "icon": "🔴"
             }
         return {
             "header_bg": "background: linear-gradient(135deg, #1E3A8A, #1E40AF); color: #FFFFFF;",
-            "box_style": "background-color: #EFF6FF !important; border-left: 6px solid #1E3A8A !important; border-top: 1px solid #93C5FD !important; border-right: 1px solid #93C5FD !important; border-bottom: 1px solid #93C5FD !important;",
-            "tag_style": "color: #1E3A8A !important; border-bottom: 1px solid #BFDBFE;",
-            "text_color": "color: #1E3A8A !important;",
+            "box_style": "background-color: #EFF6FF; border-left: 6px solid #1E3A8A; border-top: 1px solid #93C5FD; border-right: 1px solid #93C5FD; border-bottom: 1px solid #93C5FD; border-radius: 12px; padding: 16px;",
+            "tag_style": "color: #1E3A8A; font-weight: 800; font-size: 0.85rem; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid #BFDBFE; display: flex; align-items: center; gap: 6px;",
+            "text_color": "color: #1E3A8A; font-size: 0.88rem; line-height: 1.5; margin: 0;",
             "icon": "🔵"
         }
 
     t_a = get_cand_theme(nome_a, sigla_a)
     t_b = get_cand_theme(nome_b, sigla_b)
 
+    # 1. Título do Tema
+    st.markdown(f'<div class="vs-theme-title">| {tema_pergunta}</div>', unsafe_allow_html=True)
+
+    # 2. Cabeçalho VS Convergente
+    header_html = f"""
+    <div style="display: flex; align-items: center; position: relative; margin-bottom: 25px;">
+        <div style="flex: 1; {t_a['header_bg']} padding: 12px; border-radius: 10px 0 0 10px; text-align: center; font-weight: 700; font-size: 1rem;">
+            {t_a['icon']} {nome_a} ({sigla_a})
+        </div>
+        <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: #FFF; border: 3px solid #1E3A8A; border-radius: 50%; color: #0F172A; font-weight: 900; display: flex; align-items: center; justify-content: center; z-index: 10; box-shadow: 0 4px 8px rgba(0,0,0,0.15);">
+            VS
+        </div>
+        <div style="flex: 1; {t_b['header_bg']} padding: 12px; border-radius: 0 10px 10px 0; text-align: center; font-weight: 700; font-size: 1rem;">
+            {t_b['icon']} {nome_b} ({sigla_b})
+        </div>
+    </div>
+    """
+    st.markdown(header_html, unsafe_allow_html=True)
+
+    # 3. Níveis da Análise (Abas / Subtemas)
     niveis = [
         ("📌 Proposta Principal", "proposta_principal"),
         ("📊 Dados Quantitativos", "dados_quantitativos"),
@@ -96,48 +118,37 @@ def render_comparison_cards(dados_json: dict, tema_pergunta: str = "Análise Com
         ("⚠️ Riscos e Desafios", "riscos_desafios")
     ]
 
-    # Renderiza o Título e o Cabeçalho VS
-    st.markdown(f'<div class="vs-theme-title">| {tema_pergunta}</div>', unsafe_allow_html=True)
-    
-    header_html = (
-        f'<div style="display: flex; align-items: center; position: relative; margin-bottom: 25px;">'
-        f'<div style="flex: 1; {t_a["header_bg"]} padding: 12px; border-radius: 10px 0 0 10px; text-align: center; font-weight: 700; font-size: 1rem;">'
-        f'{t_a["icon"]} {nome_a} ({sigla_a})'
-        f'</div>'
-        f'<div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: #FFF; border: 3px solid #1E3A8A; border-radius: 50%; color: #0F172A; font-weight: 900; display: flex; align-items: center; justify-content: center; z-index: 10; box-shadow: 0 4px 8px rgba(0,0,0,0.15);">'
-        f'VS'
-        f'</div>'
-        f'<div style="flex: 1; {t_b["header_bg"]} padding: 12px; border-radius: 0 10px 10px 0; text-align: center; font-weight: 700; font-size: 1rem;">'
-        f'{t_b["icon"]} {nome_b} ({sigla_b})'
-        f'</div>'
-        f'</div>'
-    )
-    st.markdown(header_html, unsafe_allow_html=True)
+    # Criação de Abas Nativas (Com rolagem horizontal perfeita no Mobile)
+    aba_titulos = [n[0] for n in niveis]
+    abas = st.tabs(aba_titulos)
 
-    # Renderiza cada bloco de subtema separadamente para não sobrecarregar o parser do Streamlit
-    for badge_titulo, key_json in niveis:
+    for aba, (badge_titulo, key_json) in zip(abas, niveis):
         val_a = cand_a.get(key_json, "Informação não especificada no plano de governo.")
         val_b = cand_b.get(key_json, "Informação não especificada no plano de governo.")
 
-        card_block = (
-            f'<div style="margin-bottom: 20px;">'
-            f'<div style="background-color: #F1F5F9; color: #334155; border: 1px solid #CBD5E1; padding: 8px 12px; border-radius: 8px; text-align: center; font-weight: 700; font-size: 0.9rem; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">'
-            f'{badge_titulo}'
-            f'</div>'
-            f'<div style="display: flex; flex-wrap: wrap; gap: 12px;">'
-            f'<div style="flex: 1; min-width: 280px; {t_a["box_style"]} border-radius: 12px; padding: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.03);">'
-            f'<div style="{t_a["tag_style"]} font-weight: 800; font-size: 0.85rem; margin-bottom: 6px; padding-bottom: 4px; display: flex; align-items: center; gap: 6px;">'
-            f'{t_a["icon"]} {nome_a} ({sigla_a})'
-            f'</div>'
-            f'<p style="{t_a["text_color"]} font-size: 0.88rem; line-height: 1.5; margin: 0;">{val_a}</p>'
-            f'</div>'
-            f'<div style="flex: 1; min-width: 280px; {t_b["box_style"]} border-radius: 12px; padding: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.03);">'
-            f'<div style="{t_b["tag_style"]} font-weight: 800; font-size: 0.85rem; margin-bottom: 6px; padding-bottom: 4px; display: flex; align-items: center; gap: 6px;">'
-            f'{t_b["icon"]} {nome_b} ({sigla_b})'
-            f'</div>'
-            f'<p style="{t_b["text_color"]} font-size: 0.88rem; line-height: 1.5; margin: 0;">{val_b}</p>'
-            f'</div>'
-            f'</div>'
-            f'</div>'
-        )
-        st.markdown(card_block, unsafe_allow_html=True)
+        with aba:
+            st.markdown("<div style='margin-top: 12px;'></div>", unsafe_allow_html=True)
+            
+            # Bloco Candidato A
+            card_a_html = f"""
+            <div style="{t_a['box_style']}">
+                <div style="{t_a['tag_style']}">
+                    {t_a['icon']} {nome_a} ({sigla_a})
+                </div>
+                <p style="{t_a['text_color']}">{val_a}</p>
+            </div>
+            """
+            st.markdown(card_a_html, unsafe_allow_html=True)
+
+            st.markdown("<div style='margin-bottom: 10px;'></div>", unsafe_allow_html=True)
+
+            # Bloco Candidato B
+            card_b_html = f"""
+            <div style="{t_b['box_style']}">
+                <div style="{t_b['tag_style']}">
+                    {t_b['icon']} {nome_b} ({sigla_b})
+                </div>
+                <p style="{t_b['text_color']}">{val_b}</p>
+            </div>
+            """
+            st.markdown(card_b_html, unsafe_allow_html=True)

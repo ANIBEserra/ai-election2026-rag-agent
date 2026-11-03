@@ -13,15 +13,6 @@ footer { visibility: hidden; }
     margin: 2rem 0;
 }
 
-.hero-sphere {
-    width: 56px;
-    height: 56px;
-    background: linear-gradient(135deg, #3B82F6, #1D4ED8);
-    border-radius: 50%;
-    margin: 0 auto 16px auto;
-    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
-}
-
 .hero-title {
     font-size: 2rem;
     font-weight: 800;
@@ -73,82 +64,29 @@ div[data-testid="column"] .stButton > button:hover {
     margin-top: 10px;
 }
 
-.vs-header-container {
-    display: flex;
-    align-items: center;
-    position: relative;
-    margin-bottom: 25px;
-}
-
-.vs-header-left, .vs-header-right {
-    flex: 1;
-    padding: 14px 20px;
-    text-align: center;
-    font-size: 1.15rem;
-    font-weight: 700;
-}
-
-.vs-header-left {
-    border-radius: 12px 0 0 12px;
-}
-
-.vs-header-right {
-    border-radius: 0 12px 12px 0;
-}
-
-.vs-circle {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 46px;
-    height: 46px;
-    background-color: #FFFFFF;
-    border: 3px solid #2563EB;
-    border-radius: 50%;
-    color: #1E293B;
-    font-weight: 900;
-    font-size: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-}
-
-/* Estilização Customizada das Abas (Carrossel Horizontal no Streamlit) */
-div[data-baseweb="tab-list"] {
-    gap: 8px;
-    padding-bottom: 8px;
-    overflow-x: auto;
-}
-
-div[data-baseweb="tab"] {
-    background-color: #FFFFFF !important;
-    border: 1px solid #E2E8F0 !important;
-    border-radius: 8px !important;
-    padding: 10px 16px !important;
-    font-weight: 700 !important;
-    color: #475569 !important;
-    white-space: nowrap;
-}
-
-div[aria-selected="true"] {
-    background-color: #EFF6FF !important;
-    border-color: #2563EB !important;
-    color: #1D4ED8 !important;
-}
-
-/* Força a barra de abas (Tabs) a ter rolagem horizontal no celular */
+/* Estilização Responsiva da Barra de Abas (Tabs Nativas) */
 div[data-baseweb="tab-list"] {
     display: flex !important;
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch !important;
+    gap: 8px !important;
     padding-bottom: 6px !important;
 }
 
 div[data-baseweb="tab"] {
     flex-shrink: 0 !important;
     white-space: nowrap !important;
+    background-color: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 8px !important;
+    padding: 10px 14px !important;
+    font-weight: 700 !important;
+    color: #475569 !important;
+}
+
+div[aria-selected="true"] {
+    background-color: #EFF6FF !important;
+    border-color: #2563EB !important;
+    color: #1D4ED8 !important;
 }
