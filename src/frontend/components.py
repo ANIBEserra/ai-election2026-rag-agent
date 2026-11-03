@@ -51,9 +51,7 @@ def render_prompt_grid():
 def render_comparison_cards(dados_json: dict, tema_pergunta: str = "Análise Comparativa"):
     """
     Renderiza os cartões em blocos verticais auto-contidos no Mobile
-    e lado a lado no Desktop, garantindo identificação por cores:
-    - Lula (PT): Fundo avermelhado (#FEF2F2), Borda Vermelho Bordô (#991B1B)
-    - Bolsonaro (PL): Fundo azulado (#EFF6FF), Borda Azul Escuro (#1E3A8A)
+    e lado a lado no Desktop sem vazamento de código HTML no Streamlit.
     """
     load_css()
     candidatos = dados_json.get("candidatos", [])
@@ -98,56 +96,15 @@ def render_comparison_cards(dados_json: dict, tema_pergunta: str = "Análise Com
         ("⚠️ Riscos e Desafios", "riscos_desafios")
     ]
 
-    # Início da montagem da página em HTML puro (sem quebra de colunas pelo Streamlit)
-    html_out = f"""
-    <div class="vs-theme-title">| {tema_pergunta}</div>
-    
-    <div style="display: flex; align-items: center; position: relative; margin-bottom: 25px;">
-        <div style="flex: 1; {t_a['header_bg']} padding: 12px; border-radius: 10px 0 0 10px; text-align: center; font-weight: 700; font-size: 1rem;">
-            {t_a['icon']} {nome_a} ({sigla_a})
-        </div>
-        <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: #FFF; border: 3px solid #1E3A8A; border-radius: 50%; color: #0F172A; font-weight: 900; display: flex; align-items: center; justify-content: center; z-index: 10; box-shadow: 0 4px 8px rgba(0,0,0,0.15);">
-            VS
-        </div>
-        <div style="flex: 1; {t_b['header_bg']} padding: 12px; border-radius: 0 10px 10px 0; text-align: center; font-weight: 700; font-size: 1rem;">
-            {t_b['icon']} {nome_b} ({sigla_b})
-        </div>
-    </div>
-    """
+    # Montagem do topo (sem recuos de tabs/espaços para evitar que o Streamlit ache que é bloco de código)
+    html_out = f'<div class="vs-theme-title">| {tema_pergunta}</div>'
+    html_out += f'<div style="display: flex; align-items: center; position: relative; margin-bottom: 25px;"><div style="flex: 1; {t_a["header_bg"]} padding: 12px; border-radius: 10px 0 0 10px; text-align: center; font-weight: 700; font-size: 1rem;">{t_a["icon"]} {nome_a} ({sigla_a})</div><div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: #FFF; border: 3px solid #1E3A8A; border-radius: 50%; color: #0F172A; font-weight: 900; display: flex; align-items: center; justify-content: center; z-index: 10; box-shadow: 0 4px 8px rgba(0,0,0,0.15);">VS</div><div style="flex: 1; {t_b["header_bg"]} padding: 12px; border-radius: 0 10px 10px 0; text-align: center; font-weight: 700; font-size: 1rem;">{t_b["icon"]} {nome_b} ({sigla_b})</div></div>'
 
-    # Para cada nível de análise (Subtema)
+    # Montagem dos cartões limpos
     for badge_titulo, key_json in niveis:
         val_a = cand_a.get(key_json, "Informação não especificada no plano de governo.")
         val_b = cand_b.get(key_json, "Informação não especificada no plano de governo.")
 
-        html_out += f"""
-        <div style="margin-bottom: 20px;">
-            <!-- Badge do Subtema centralizado/destacado -->
-            <div style="background-color: #F1F5F9; color: #334155; border: 1px solid #CBD5E1; padding: 8px 12px; border-radius: 8px; text-align: center; font-weight: 700; font-size: 0.9rem; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-                {badge_titulo}
-            </div>
-
-            <!-- Grid flexível que se adapta no Mobile e Desktop -->
-            <div style="display: flex; flex-wrap: wrap; gap: 12px;">
-                
-                <!-- CARD CANDIDATO A -->
-                <div style="flex: 1; min-width: 280px; {t_a['box_style']} border-radius: 12px; padding: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.03);">
-                    <div style="{t_a['tag_style']} font-weight: 800; font-size: 0.85rem; margin-bottom: 6px; padding-bottom: 4px; display: flex; align-items: center; gap: 6px;">
-                        {t_a['icon']} {nome_a} ({sigla_a})
-                    </div>
-                    <p style="{t_a['text_color']} font-size: 0.88rem; line-height: 1.5; margin: 0;">{val_a}</p>
-                </div>
-
-                <!-- CARD CANDIDATO B -->
-                <div style="flex: 1; min-width: 280px; {t_b['box_style']} border-radius: 12px; padding: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.03);">
-                    <div style="{t_b['tag_style']} font-weight: 800; font-size: 0.85rem; margin-bottom: 6px; padding-bottom: 4px; display: flex; align-items: center; gap: 6px;">
-                        {t_b['icon']} {nome_b} ({sigla_b})
-                    </div>
-                    <p style="{t_b['text_color']} font-size: 0.88rem; line-height: 1.5; margin: 0;">{val_b}</p>
-                </div>
-
-            </div>
-        </div>
-        """
+        html_out += f'<div style="margin-bottom: 20px;"><div style="background-color: #F1F5F9; color: #334155; border: 1px solid #CBD5E1; padding: 8px 12px; border-radius: 8px; text-align: center; font-weight: 700; font-size: 0.9rem; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">{badge_titulo}</div><div style="display: flex; flex-wrap: wrap; gap: 12px;"><div style="flex: 1; min-width: 280px; {t_a["box_style"]} border-radius: 12px; padding: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.03);"><div style="{t_a["tag_style"]} font-weight: 800; font-size: 0.85rem; margin-bottom: 6px; padding-bottom: 4px; display: flex; align-items: center; gap: 6px;">{t_a["icon"]} {nome_a} ({sigla_a})</div><p style="{t_a["text_color"]} font-size: 0.88rem; line-height: 1.5; margin: 0;">{val_a}</p></div><div style="flex: 1; min-width: 280px; {t_b["box_style"]} border-radius: 12px; padding: 14px; box-shadow: 0 2px 4px rgba(0,0,0,0.03);"><div style="{t_b["tag_style"]} font-weight: 800; font-size: 0.85rem; margin-bottom: 6px; padding-bottom: 4px; display: flex; align-items: center; gap: 6px;">{t_b["icon"]} {nome_b} ({sigla_b})</div><p style="{t_b["text_color"]} font-size: 0.88rem; line-height: 1.5; margin: 0;">{val_b}</p></div></div></div>'
 
     st.markdown(html_out, unsafe_allow_html=True)
