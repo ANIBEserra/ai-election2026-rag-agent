@@ -33,7 +33,7 @@ def render_prompt_grid():
         {"titulo": "🤝 Programas Sociais", "pergunta": "Quais as propostas de programas de transferência de renda e assistência social?"},
         {"titulo": "🏗️ Infraestrutura", "pergunta": "Quais os planos de investimento em infraestrutura, transportes e saneamento?"},
         {"titulo": "📊 Economia e Gastos", "pergunta": "Quais as propostas econômicas, controle inflacionário e regras fiscais?"},
-        {"titulo": "🎭 Cultura", "pergunta": "Quais as diretrizes para incentive à cultura, arte e economia criativa?"},
+        {"titulo": "🎭 Cultura", "pergunta": "Quais as diretrizes para incentivo à cultura, arte e economia criativa?"},
         {"titulo": "🌱 Investimento e Bem estar", "pergunta": "Quais as políticas voltadas para sustentabilidade, meio ambiente e bem-estar?"}
     ]
 
@@ -50,8 +50,8 @@ def render_prompt_grid():
 
 def render_comparison_cards(dados_json: dict, tema_pergunta: str = "Análise Comparativa"):
     """
-    Renderiza um Carrossel no estilo Stack Cards 3D (Opção 2 - Swiper.js).
-    Permite arrastar os cards para o lado (swipe/drag) igual ao Dribbble.
+    Renderiza um Carrossel no estilo Stack Cards 3D (Swiper.js).
+    Possui altura dinâmica e auto-ajuste para evitar cortes de texto no mobile.
     """
     load_css()
     candidatos = dados_json.get("candidatos", [])
@@ -96,7 +96,7 @@ def render_comparison_cards(dados_json: dict, tema_pergunta: str = "Análise Com
         ("⚠️ Riscos e Desafios", "riscos_desafios")
     ]
 
-    # Monta o HTML dos slides do Swiper
+    # Monta os slides HTML com scroll interno e adaptação de altura
     swiper_slides_html = ""
     for idx, (badge_titulo, key_json) in enumerate(niveis):
         cand_blocks = ""
@@ -108,33 +108,34 @@ def render_comparison_cards(dados_json: dict, tema_pergunta: str = "Análise Com
                 <div style="{t['tag']} font-weight: 800; font-size: 0.85rem; margin-bottom: 4px; padding-bottom: 4px; border-bottom: 1px solid rgba(0,0,0,0.08); display: flex; align-items: center; gap: 6px;">
                     {t['icon']} {t['nome']}
                 </div>
-                <p style="{t['tag']} font-size: 0.85rem; line-height: 1.4; margin: 0;">{val}</p>
+                <p style="{t['tag']} font-size: 0.85rem; line-height: 1.45; margin: 0; word-break: break-word;">{val}</p>
             </div>
             """
 
         swiper_slides_html += f"""
         <div class="swiper-slide">
-            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 20px; padding: 18px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;">
+            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 20px; padding: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between; max-height: 520px; overflow-y: auto;">
                 <div>
                     <div style="background: #F1F5F9; color: #0F172A; text-align: center; font-weight: 800; padding: 8px 12px; border-radius: 10px; font-size: 0.95rem; margin-bottom: 12px;">
                         {badge_titulo}
                     </div>
                     {cand_blocks}
                 </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; color: #94A3B8; font-weight: 700; font-size: 0.78rem; border-top: 1px solid #F1F5F9; padding-top: 8px; margin-top: 4px;">
-                    <span>{idx + 1} / {len(niveis)}</span>
+                <div style="display: flex; justify-content: space-between; align-items: center; color: #94A3B8; font-weight: 700; font-size: 0.78rem; border-top: 1px solid #F1F5F9; padding-top: 8px; margin-top: 4px; flex-shrink: 0;">
+                    <span>Subtema {idx + 1} de {len(niveis)}</span>
                     <span>Deslize para trocar 👉</span>
                 </div>
             </div>
         </div>
         """
 
-    # HTML/CSS/JS completo com Swiper (Cards Effect)
+    # HTML/CSS/JS completo com Swiper e altura ajustada para Mobile e Desktop
     html_component = f"""
     <!DOCTYPE html>
     <html>
     <head>
         <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
         <style>
             body {{
@@ -148,13 +149,21 @@ def render_comparison_cards(dados_json: dict, tema_pergunta: str = "Análise Com
             }}
             .swiper {{
                 width: 100%;
-                max-width: 420px;
-                height: 480px;
+                max-width: 440px;
+                height: 540px;
                 padding-top: 10px;
-                padding-bottom: 20px;
+                padding-bottom: 30px;
             }}
             .swiper-slide {{
                 border-radius: 20px;
+            }}
+            /* Estilização sutil da barra de rolagem interna */
+            ::-webkit-scrollbar {{
+                width: 4px;
+            }}
+            ::-webkit-scrollbar-thumb {{
+                background: #CBD5E1;
+                border-radius: 4px;
             }}
         </style>
     </head>
@@ -166,7 +175,6 @@ def render_comparison_cards(dados_json: dict, tema_pergunta: str = "Análise Com
             <div class="swiper-pagination"></div>
         </div>
 
-        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"></script>
         <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
         <script>
             var swiper = new Swiper(".mySwiper", {{
@@ -182,5 +190,4 @@ def render_comparison_cards(dados_json: dict, tema_pergunta: str = "Análise Com
     </html>
     """
 
-    # Injeta no Streamlit como Iframe nativo sem risco de vazamento de HTML
-    components.html(html_component, height=520)
+    components.html(html_component, height=580)
