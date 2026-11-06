@@ -1,5 +1,7 @@
 from pathlib import Path
+import json
 import streamlit as st
+import streamlit.components.v1 as components
 
 def load_css():
     """Lê e injeta o arquivo CSS customizado no Streamlit."""
@@ -11,15 +13,13 @@ def load_css():
 def render_hero_welcome():
     load_css()
     st.markdown(
-        """
-        <div class="hero-container" style="text-align: center; margin: 2rem 0;">
-            <div style="width: 56px; height: 56px; background: linear-gradient(135deg, #3B82F6, #1D4ED8); border-radius: 50%; margin: 0 auto 16px auto;"></div>
-            <div class="hero-title" style="font-size: 2rem; font-weight: 800; margin-bottom: 8px;">Olá, seja bem-vindo(a)! 👋</div>
-            <div class="hero-subtitle" style="font-size: 1rem; max-width: 600px; margin: 0 auto;">
-                Sou seu assistente analítico para as Eleições 2026. Selecione uma sugestão abaixo ou digite sua pergunta para iniciarmos a análise comparativa.
-            </div>
-        </div>
-        """,
+        '<div class="hero-container" style="text-align: center; margin: 2rem 0;">'
+        '<div style="width: 56px; height: 56px; background: linear-gradient(135deg, #3B82F6, #1D4ED8); border-radius: 50%; margin: 0 auto 16px auto;"></div>'
+        '<div class="hero-title" style="font-size: 2rem; font-weight: 800; margin-bottom: 8px;">Olá, seja bem-vindo(a)! 👋</div>'
+        '<div class="hero-subtitle" style="font-size: 1rem; max-width: 600px; margin: 0 auto;">'
+        'Sou seu assistente analítico para as Eleições 2026. Selecione uma sugestão abaixo ou digite sua pergunta para iniciarmos a análise comparativa.'
+        '</div>'
+        '</div>',
         unsafe_allow_html=True
     )
 
@@ -33,7 +33,7 @@ def render_prompt_grid():
         {"titulo": "🤝 Programas Sociais", "pergunta": "Quais as propostas de programas de transferência de renda e assistência social?"},
         {"titulo": "🏗️ Infraestrutura", "pergunta": "Quais os planos de investimento em infraestrutura, transportes e saneamento?"},
         {"titulo": "📊 Economia e Gastos", "pergunta": "Quais as propostas econômicas, controle inflacionário e regras fiscais?"},
-        {"titulo": "🎭 Cultura", "pergunta": "Quais as diretrizes para incentivo à cultura, arte e economia criativa?"},
+        {"titulo": "🎭 Cultura", "pergunta": "Quais as diretrizes para incentive à cultura, arte e economia criativa?"},
         {"titulo": "🌱 Investimento e Bem estar", "pergunta": "Quais as políticas voltadas para sustentabilidade, meio ambiente e bem-estar?"}
     ]
 
@@ -50,67 +50,45 @@ def render_prompt_grid():
 
 def render_comparison_cards(dados_json: dict, tema_pergunta: str = "Análise Comparativa"):
     """
-    Renderiza os cartões comparativos usando Tabs (Abas) Nativas do Streamlit.
-    Garante visual limpo e responsivo sem risco de vazamento de HTML.
-    - Lula (PT): Vermelho Bordô (#991B1B)
-    - Bolsonaro (PL): Azul Escuro (#1E3A8A)
+    Renderiza um Carrossel no estilo Stack Cards 3D (Opção 2 - Swiper.js).
+    Permite arrastar os cards para o lado (swipe/drag) igual ao Dribbble.
     """
     load_css()
     candidatos = dados_json.get("candidatos", [])
-    
     if not candidatos:
         st.warning("Nenhum dado de candidato encontrado para esta consulta.")
         return
 
-    cand_a = candidatos[0] if len(candidatos) > 0 else {}
-    cand_b = candidatos[1] if len(candidatos) > 1 else {}
-
-    nome_a = cand_a.get('nome_candidato', 'Candidato A')
-    sigla_a = cand_a.get('sigla_partido', '')
-    nome_b = cand_b.get('nome_candidato', 'Candidato B')
-    sigla_b = cand_b.get('sigla_partido', '')
-
-    def get_cand_theme(nome, sigla):
-        full = f"{nome} {sigla}".upper()
-        if "LULA" in full or "PT" in full:
-            return {
-                "header_bg": "background: linear-gradient(135deg, #7F1D1D, #991B1B); color: #FFFFFF;",
-                "box_style": "background-color: #FEF2F2; border-left: 6px solid #991B1B; border-top: 1px solid #FCA5A5; border-right: 1px solid #FCA5A5; border-bottom: 1px solid #FCA5A5; border-radius: 12px; padding: 16px;",
-                "tag_style": "color: #7F1D1D; font-weight: 800; font-size: 0.85rem; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid #FECACA; display: flex; align-items: center; gap: 6px;",
-                "text_color": "color: #7F1D1D; font-size: 0.88rem; line-height: 1.5; margin: 0;",
-                "icon": "🔴"
-            }
-        return {
-            "header_bg": "background: linear-gradient(135deg, #1E3A8A, #1E40AF); color: #FFFFFF;",
-            "box_style": "background-color: #EFF6FF; border-left: 6px solid #1E3A8A; border-top: 1px solid #93C5FD; border-right: 1px solid #93C5FD; border-bottom: 1px solid #93C5FD; border-radius: 12px; padding: 16px;",
-            "tag_style": "color: #1E3A8A; font-weight: 800; font-size: 0.85rem; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid #BFDBFE; display: flex; align-items: center; gap: 6px;",
-            "text_color": "color: #1E3A8A; font-size: 0.88rem; line-height: 1.5; margin: 0;",
-            "icon": "🔵"
-        }
-
-    t_a = get_cand_theme(nome_a, sigla_a)
-    t_b = get_cand_theme(nome_b, sigla_b)
-
-    # 1. Título do Tema
+    # Título do Tema em Streamlit nativo
     st.markdown(f'<div class="vs-theme-title">| {tema_pergunta}</div>', unsafe_allow_html=True)
 
-    # 2. Cabeçalho VS Convergente
-    header_html = f"""
-    <div style="display: flex; align-items: center; position: relative; margin-bottom: 25px;">
-        <div style="flex: 1; {t_a['header_bg']} padding: 12px; border-radius: 10px 0 0 10px; text-align: center; font-weight: 700; font-size: 1rem;">
-            {t_a['icon']} {nome_a} ({sigla_a})
-        </div>
-        <div style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; background: #FFF; border: 3px solid #1E3A8A; border-radius: 50%; color: #0F172A; font-weight: 900; display: flex; align-items: center; justify-content: center; z-index: 10; box-shadow: 0 4px 8px rgba(0,0,0,0.15);">
-            VS
-        </div>
-        <div style="flex: 1; {t_b['header_bg']} padding: 12px; border-radius: 0 10px 10px 0; text-align: center; font-weight: 700; font-size: 1rem;">
-            {t_b['icon']} {nome_b} ({sigla_b})
-        </div>
-    </div>
-    """
-    st.markdown(header_html, unsafe_allow_html=True)
+    def get_cand_theme(cand: dict):
+        nome = cand.get('nome_candidato', 'Candidato')
+        sigla = cand.get('sigla_partido', '')
+        full = f"{nome} {sigla}".upper()
 
-    # 3. Níveis da Análise (Abas / Subtemas)
+        if "LULA" in full or "PT" in full:
+            return {
+                "nome": f"{nome} ({sigla})" if sigla else nome,
+                "box": "background-color: #FEF2F2; border: 1px solid #FCA5A5; border-left: 6px solid #991B1B;",
+                "tag": "color: #7F1D1D;",
+                "icon": "🔴"
+            }
+        elif "BOLSONARO" in full or "PL" in full:
+            return {
+                "nome": f"{nome} ({sigla})" if sigla else nome,
+                "box": "background-color: #EFF6FF; border: 1px solid #93C5FD; border-left: 6px solid #1E3A8A;",
+                "tag": "color: #1E3A8A;",
+                "icon": "🔵"
+            }
+        else:
+            return {
+                "nome": f"{nome} ({sigla})" if sigla else nome,
+                "box": "background-color: #F8FAFC; border: 1px solid #CBD5E1; border-left: 6px solid #475569;",
+                "tag": "color: #334155;",
+                "icon": "⚪"
+            }
+
     niveis = [
         ("📌 Proposta Principal", "proposta_principal"),
         ("📊 Dados Quantitativos", "dados_quantitativos"),
@@ -118,37 +96,91 @@ def render_comparison_cards(dados_json: dict, tema_pergunta: str = "Análise Com
         ("⚠️ Riscos e Desafios", "riscos_desafios")
     ]
 
-    # Criação de Abas Nativas (Com rolagem horizontal perfeita no Mobile)
-    aba_titulos = [n[0] for n in niveis]
-    abas = st.tabs(aba_titulos)
-
-    for aba, (badge_titulo, key_json) in zip(abas, niveis):
-        val_a = cand_a.get(key_json, "Informação não especificada no plano de governo.")
-        val_b = cand_b.get(key_json, "Informação não especificada no plano de governo.")
-
-        with aba:
-            st.markdown("<div style='margin-top: 12px;'></div>", unsafe_allow_html=True)
-            
-            # Bloco Candidato A
-            card_a_html = f"""
-            <div style="{t_a['box_style']}">
-                <div style="{t_a['tag_style']}">
-                    {t_a['icon']} {nome_a} ({sigla_a})
+    # Monta o HTML dos slides do Swiper
+    swiper_slides_html = ""
+    for idx, (badge_titulo, key_json) in enumerate(niveis):
+        cand_blocks = ""
+        for cand in candidatos:
+            t = get_cand_theme(cand)
+            val = cand.get(key_json, "Não especificado no plano de governo.")
+            cand_blocks += f"""
+            <div style="{t['box']} border-radius: 12px; padding: 12px; margin-bottom: 10px; text-align: left;">
+                <div style="{t['tag']} font-weight: 800; font-size: 0.85rem; margin-bottom: 4px; padding-bottom: 4px; border-bottom: 1px solid rgba(0,0,0,0.08); display: flex; align-items: center; gap: 6px;">
+                    {t['icon']} {t['nome']}
                 </div>
-                <p style="{t_a['text_color']}">{val_a}</p>
+                <p style="{t['tag']} font-size: 0.85rem; line-height: 1.4; margin: 0;">{val}</p>
             </div>
             """
-            st.markdown(card_a_html, unsafe_allow_html=True)
 
-            st.markdown("<div style='margin-bottom: 10px;'></div>", unsafe_allow_html=True)
-
-            # Bloco Candidato B
-            card_b_html = f"""
-            <div style="{t_b['box_style']}">
-                <div style="{t_b['tag_style']}">
-                    {t_b['icon']} {nome_b} ({sigla_b})
+        swiper_slides_html += f"""
+        <div class="swiper-slide">
+            <div style="background: #FFFFFF; border: 1px solid #E2E8F0; border-radius: 20px; padding: 18px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); height: 100%; box-sizing: border-box; display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                    <div style="background: #F1F5F9; color: #0F172A; text-align: center; font-weight: 800; padding: 8px 12px; border-radius: 10px; font-size: 0.95rem; margin-bottom: 12px;">
+                        {badge_titulo}
+                    </div>
+                    {cand_blocks}
                 </div>
-                <p style="{t_b['text_color']}">{val_b}</p>
+                <div style="display: flex; justify-content: space-between; align-items: center; color: #94A3B8; font-weight: 700; font-size: 0.78rem; border-top: 1px solid #F1F5F9; padding-top: 8px; margin-top: 4px;">
+                    <span>{idx + 1} / {len(niveis)}</span>
+                    <span>Deslize para trocar 👉</span>
+                </div>
             </div>
-            """
-            st.markdown(card_b_html, unsafe_allow_html=True)
+        </div>
+        """
+
+    # HTML/CSS/JS completo com Swiper (Cards Effect)
+    html_component = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+        <style>
+            body {{
+                margin: 0;
+                padding: 0;
+                background: transparent;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }}
+            .swiper {{
+                width: 100%;
+                max-width: 420px;
+                height: 480px;
+                padding-top: 10px;
+                padding-bottom: 20px;
+            }}
+            .swiper-slide {{
+                border-radius: 20px;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="swiper mySwiper">
+            <div class="swiper-wrapper">
+                {swiper_slides_html}
+            </div>
+            <div class="swiper-pagination"></div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"></script>
+        <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+        <script>
+            var swiper = new Swiper(".mySwiper", {{
+                effect: "cards",
+                grabCursor: true,
+                pagination: {{
+                    el: ".swiper-pagination",
+                    clickable: true,
+                }},
+            }});
+        </script>
+    </body>
+    </html>
+    """
+
+    # Injeta no Streamlit como Iframe nativo sem risco de vazamento de HTML
+    components.html(html_component, height=520)

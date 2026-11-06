@@ -63,30 +63,3 @@ div[data-testid="column"] .stButton > button:hover {
     margin-bottom: 20px;
     margin-top: 10px;
 }
-
-/* Estilização Responsiva da Barra de Abas (Tabs Nativas) */
-div[data-baseweb="tab-list"] {
-    display: flex !important;
-    flex-wrap: nowrap !important;
-    overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    gap: 8px !important;
-    padding-bottom: 6px !important;
-}
-
-div[data-baseweb="tab"] {
-    flex-shrink: 0 !important;
-    white-space: nowrap !important;
-    background-color: #FFFFFF !important;
-    border: 1px solid #E2E8F0 !important;
-    border-radius: 8px !important;
-    padding: 10px 14px !important;
-    font-weight: 700 !important;
-    color: #475569 !important;
-}
-
-div[aria-selected="true"] {
-    background-color: #EFF6FF !important;
-    border-color: #2563EB !important;
-    color: #1D4ED8 !important;
-}
